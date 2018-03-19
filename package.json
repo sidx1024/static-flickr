@@ -1,0 +1,31 @@
+{
+  "name": "static-flickr",
+  "version": "1.0.0",
+  "description": "A flickr API proxy with caching",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sidx1024/static-flickr.git"
+  },
+  "keywords": [
+    "flickr",
+    "api",
+    "proxy",
+    "js"
+  ],
+  "author": "sidx1024",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sidx1024/static-flickr/issues"
+  },
+  "homepage": "https://github.com/sidx1024/static-flickr#readme",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "flickrapi": "^0.6.0"
+  }
+}
