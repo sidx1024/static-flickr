@@ -1,7 +1,7 @@
 {
   "name": "static-flickr",
   "version": "1.0.0",
-  "description": "A flickr API proxy with caching",
+  "description": "Builds an updated json file for your flickr profile",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
