@@ -126,7 +126,7 @@ class StaticFlickr {
           return new Promise((resolve, reject) => {
             promisify(flickr.photos.getSizes)({photo_id: photoId})
               .then((sizes) => {
-                const labeledSizes = {}; // TODO: make this const
+                const labeledSizes = {};
                 sizes.sizes.size.map((size) => {
                   labeledSizes[this.jsonFriendlyName(size.label)] = size;
                 });
