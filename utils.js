@@ -79,6 +79,7 @@ class StaticFlickr {
     };
 
     const photosetMap = {};
+    const mappedSizes = {};
 
     const chain = promisify(flickr.photosets.getList);
     chain({api_key, user_id})
@@ -101,46 +102,48 @@ class StaticFlickr {
       })
       .then((mappedPhotoSetList) => {
         mappedPhotoSetList.map((obj) => {
-          cache.photosets[obj.id].photos = obj.photoset.photo.map((photo) => {
-            return this.filterObjectKeys(photo, ['id', 'title']);
-          });
+          const filteredPhotoList = obj.photoset.photo.map((photo) =>
+            (this.filterObjectKeys(photo, ['id', 'title']))
+          );
+          cache.photosets[obj.id].photos = filteredPhotoList.reduce((acc, item) => {
+            acc[item.id] = item;
+            return acc;
+          }, {});
         });
         let listOfPhotoIds = [];
         Object.values(cache.photosets).map((photoset) => {
           listOfPhotoIds = listOfPhotoIds.concat(
-            photoset.photos.map((photo) => {
-              photosetMap[photo.id] = photoset.id;
-              return photo.id;
+            Object.keys(photoset.photos).map((photoId) => {
+              photosetMap[photoId] = photoset.id;
+              return photoId;
             })
           );
         });
         return listOfPhotoIds;
       })
       .then((listOfPhotoIds) => {
-        const labeledSizes = {};
-        return Promise.all(listOfPhotoIds.map((id) => {
+        return Promise.all(listOfPhotoIds.map((photoId) => {
           return new Promise((resolve, reject) => {
-            promisify(flickr.photos.getSizes)({photo_id: id})
+            promisify(flickr.photos.getSizes)({photo_id: photoId})
               .then((sizes) => {
+                const labeledSizes = {}; // TODO: make this const
                 sizes.sizes.size.map((size) => {
-                   labeledSizes[this.jsonFriendlyName(size.label)] = size;
+                  labeledSizes[this.jsonFriendlyName(size.label)] = size;
                 });
-                return labeledSizes;
+                mappedSizes[photoId] = labeledSizes;
+                resolve();
               })
-              .then((sizes) => { resolve({id, sizes}); })
               .catch(reject);
           });
         }));
       })
-      .then((mappedSizes) => {
-        mappedSizes.map((obj) => {
-          cache.photosets[photosetMap[obj.id]].photos.map((photo) => {
-            if (photo.id === obj.id) {
-              photo.sizes = obj.sizes;
-            }
-          });
-        });
-        console.log(JSON.stringify(cache));
+      .then(() => {
+        Object.values(cache.photosets).map((photoset) => {
+          Object.values(photoset.photos).map((photo) => {
+            cache.photosets[photoset.id].photos[photo.id].sizes = mappedSizes[photo.id];
+            console.log('>>', photo.id, cache.photosets[photoset.id].photos[photo.id].sizes.thumbnail.source);
+          })
+        })
       })
       .then(() => (callback(false, cache.photosets)))
       .catch((error) => {

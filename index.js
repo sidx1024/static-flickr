@@ -9,6 +9,12 @@ const staticFlickr = new StaticFlickr({
   user_id: process.env.FLICKR_USER_ID
 });
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
 app.get('/refresh/photos/' + process.env.CACHE_REFRESH_TOKEN, function (req, res) {
   res.send('gallery.json will be refreshed momentarily.');
   staticFlickr.buildPhotosJson('public/gallery.json');
