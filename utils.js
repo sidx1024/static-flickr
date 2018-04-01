@@ -9,6 +9,7 @@ class StaticFlickr {
     this.flickrOptions = {
       api_key: options.api_key,
       secret: options.secret,
+      developer_id: options.developer_id,
       user_id: options.user_id
     };
     this.flickrApiObject = false;
@@ -72,7 +73,7 @@ class StaticFlickr {
 
   getPhotoSetList(callback) {
     const flickr = this.flickrApiObject;
-    const {api_key, user_id} = this.flickrOptions;
+    const {api_key, developer_id, user_id} = this.flickrOptions;
 
     const cache = {
       photosets: {}

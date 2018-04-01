@@ -6,7 +6,8 @@ const StaticFlickr = require('./utils');
 const staticFlickr = new StaticFlickr({
   api_key: process.env.FLICKR_API_KEY,
   secret: process.env.FLICKR_SECRET,
-  user_id: process.env.FLICKR_USER_ID
+  user_id: process.env.FLICKR_USER_ID,
+  developer_id: process.env.FLICKR_DEVELOPER_ID
 });
 
 app.use(function(req, res, next) {
